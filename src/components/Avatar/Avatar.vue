@@ -52,7 +52,6 @@
 			:srcset="avatarSrcSetLoaded"
 			alt="">
 		<div v-if="hasMenu" class="icon-more" />
-
 		<!-- avatar status -->
 		<div v-if="canDisplayUserStatus"
 			class="avatardiv__user-status"
@@ -77,24 +76,29 @@
 		<div v-if="userDoesNotExist" class="unknown">
 			{{ initials }}
 		</div>
-		<div v-if="hasMenu"
-			v-show="contactsMenuOpenState"
-			class="popovermenu"
-			:class="`menu-${menuPosition}`">
-			<PopoverMenu :is-open="contactsMenuOpenState" :menu="menu" />
-		</div>
+		<Popover
+			placement="auto"
+			:open="contactsMenuOpenState">
+			<template>
+				<ul>
+					<PopoverMenuItem v-for="(item, key) in contactsMenuActions" :key="key" :item="item" />
+				</ul>
+				<p>Dummy content</p>
+			</template>
+		</Popover>
 	</div>
 </template>
 
 <script>
 import { directive as ClickOutside } from 'v-click-outside'
-import PopoverMenu from '../PopoverMenu'
-import { getCurrentUser } from '@nextcloud/auth'
 import axios from '@nextcloud/axios'
+import { getCurrentUser } from '@nextcloud/auth'
 import { generateUrl } from '@nextcloud/router'
 import Tooltip from '../../directives/Tooltip'
 import usernameToColor from '../../functions/usernameToColor'
 import { userStatus } from '../../mixins'
+import Popover from '../Popover/Popover'
+import PopoverMenuItem from '../PopoverMenu/PopoverMenuItem'
 
 export default {
 	name: 'Avatar',
@@ -103,7 +107,8 @@ export default {
 		ClickOutside,
 	},
 	components: {
-		PopoverMenu,
+		Popover,
+		PopoverMenuItem,
 	},
 	mixins: [userStatus],
 	props: {
